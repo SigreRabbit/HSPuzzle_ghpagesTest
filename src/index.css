@@ -1,13 +1,119 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    font-size: 16px;
+    font-family: "メイリオ", Meiryo, "游ゴシック", YuGothic, sans-serif;
+    /* margin: 20px; */
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.game {
+    /* margin: 15px; */
 }
+
+.button.start {
+    width: 30%;
+    max-width: 200px;
+    margin: 15px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #68779a;
+    background: #cbe8fa;
+    cursor: pointer;
+}
+
+.message {
+    margin-top: 5px;
+    margin-left: 25px;
+    /* padding: 10px; */
+    width: auto;
+}
+
+.board {
+    box-sizing: border-box;
+    width: 85vw;
+    max-width: 600px;
+    height: 75vh;
+    max-height: 800px;
+    margin: 10px;
+}
+
+.card {
+    float: left;
+    text-align: center;
+    box-sizing: border-box;
+
+
+    /* display: block; */
+
+    width: calc(100% / 3 - 30px);
+    height: calc(100% / 3 - 30px);
+    margin: 5px;
+
+    background: #434343;
+    /*死亡時の色*/
+
+    outline: 1px solid #999999;
+}
+
+.card.alive {
+    cursor: pointer;
+    background: #ffffff;
+}
+
+.card.alive:hover {
+    outline: 3px solid #80e8f2;
+}
+
+.card.selected,
+.card.selected:hover {
+    outline: 3px solid #fe2828;
+}
+
+.hero {
+    float: left;
+    text-align: center;
+    box-sizing: border-box;
+    /* display: block; */
+
+    width: calc(100% / 3 - 30px);
+    height: calc(100% / 3 - 30px);
+    margin: 5px;
+
+    background: #ffffff;
+    border: 1px solid #999999;
+
+    /* font-size: 24px; */
+}
+
+/* 
+#loading {
+    display: none;
+}
+
+.main {
+    display: none;
+}
+
+#next {
+    width: 130px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #68779a;
+    background: #cbe8fa;
+    cursor: pointer;
+}
+
+.card {
+    margin: 10px;
+}
+
+.select {
+    width: 50px;
+    padding: 5px;
+    box-sizing: border-box;
+    border: 1px solid #68779a;
+    background: #cbe8fa;
+    cursor: pointer;
+}
+
+.dead .name {
+    text-decoration: line-through
+} */
