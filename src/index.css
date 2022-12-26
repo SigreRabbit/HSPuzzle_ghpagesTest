@@ -1,87 +1,110 @@
 body {
     font-size: 16px;
     font-family: "メイリオ", Meiryo, "游ゴシック", YuGothic, sans-serif;
-    /* margin: 20px; */
 }
 
-.game {
-    /* margin: 15px; */
-}
+
 
 .button.start {
+    float: left;
     width: 30%;
+    min-width: 130px;
     max-width: 200px;
+    height: 40px;
     margin: 15px;
     padding: 10px;
-    box-sizing: border-box;
     border: 1px solid #68779a;
+    box-sizing: border-box;
     background: #cbe8fa;
     cursor: pointer;
 }
 
+.counter {
+    float: left;
+    width: 70%;
+    min-width: 200px;
+    max-width: 500px;
+    margin: 15px;
+}
+
+.time {
+    float: left;
+    margin-right: 2em;
+}
+
+.time-space {
+    margin-left: .5em;
+}
+
+.score {
+    float: left;
+}
+
+#progress-bar {
+    width: 100%;
+    max-width: 300px;
+}
+
+.top {
+    overflow: hidden;
+}
+
 .message {
-    margin-top: 5px;
-    margin-left: 25px;
     /* padding: 10px; */
     width: auto;
+
+/* margin-top: 5px; */
+    margin-left: 15px;
 }
 
 .board {
-    box-sizing: border-box;
     width: 85vw;
     max-width: 600px;
     height: 75vh;
     max-height: 800px;
     margin: 10px;
+    /* box-sizing: border-box; */
 }
 
-.card {
+.card, .hero {
     float: left;
-    text-align: center;
-    box-sizing: border-box;
-
-
-    /* display: block; */
-
-    width: calc(100% / 3 - 30px);
-    height: calc(100% / 3 - 30px);
+    width: calc((100% - 40px) / 3);
+    height: calc((100% - 40px) / 3);
     margin: 5px;
-
-    background: #434343;
-    /*死亡時の色*/
-
+    box-sizing: border-box;
+    text-align: center;
     outline: 1px solid #999999;
 }
 
+/*死亡時の色*/
+.card {
+    background: #434343;
+}
+
 .card.alive {
-    cursor: pointer;
     background: #ffffff;
+    cursor: pointer;
 }
 
 .card.alive:hover {
     outline: 3px solid #80e8f2;
 }
 
-.card.selected,
-.card.selected:hover {
+.card.selected, .card.selected:hover {
     outline: 3px solid #fe2828;
 }
 
+/* 
 .hero {
     float: left;
-    text-align: center;
-    box-sizing: border-box;
-    /* display: block; */
-
     width: calc(100% / 3 - 30px);
     height: calc(100% / 3 - 30px);
     margin: 5px;
-
-    background: #ffffff;
     border: 1px solid #999999;
-
-    /* font-size: 24px; */
-}
+    box-sizing: border-box;
+    background: #ffffff;
+    text-align: center;
+} */
 
 /* 
 #loading {

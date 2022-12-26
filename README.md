@@ -68,3 +68,22 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+### ローカルで動かす
+```
+npm start
+```
+- http://localhost:3000
+
+### gh-pagesを更新
+```
+npm run deploy
+```
+
+### mainにpush
+```
+git add .
+git commit
+git push
+```
