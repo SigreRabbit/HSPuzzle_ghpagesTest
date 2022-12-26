@@ -171,7 +171,7 @@ function Game(props) {
     // スタートボタンが押された時
     const handleStartButtonClick = useCallback((jsonData) => {
         setGameReady(false);
-        setMessage("");
+        setMessage("　"); // 表示合わせに全角スペース
 
         setStartButtonText(`Round ${round}`);
         if (hp <= 0) setHp(HPMAX);
