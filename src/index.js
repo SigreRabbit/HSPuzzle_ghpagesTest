@@ -2,11 +2,12 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
-const COUNTMAX = 30;
-const HPMAX = 30;
+const COUNTMAX = 30; // 制限時間(短くしていく場合どこかで管理)
+const HEROHPMAX = 30; // ヒーローHP
 
 class CardData {
     constructor(props) {
+        this.id = props.id;
         this.name = props.name;
         this.attack = props.attack;
         this.health = props.health;
@@ -41,29 +42,61 @@ function Counter(props) {
 function Card(props) {
     return (
         <div
-            className={
-                "card"
-                + (props.card.health !== 0 ? " alive" : "")
-                + (props.selected ? " selected" : "")
-            }
-            onClick={props.card.health !== 0 ? props.onClick : function () { return false; }}
+            className={'card-container' + (props.card.health !== 0 ? " alive" : "")}
+            // onClick={props.card.health !== 0 ? props.onClick : () => { return false; }} // 条件判定がここであるべきかは微妙(Game側とかでもできるため)
+            onClick={props.onClick}
         >
-            {props.card.name} < br />
-            {props.card.attack} / {props.card.health}
+            <img
+                className={
+                    "card"
+                    + (props.card.health !== 0 ? " alive" : "")
+                    + (props.selected ? " selected" : "")
+                }
+                onLoad={props.onLoad}
+                src={`https://art.hearthstonejson.com/v1/render/latest/jaJP/256x/${props.card.id}.png`}
+                alt=""
+            />
+            <div className="card-stats-width card-attack-width">
+                <div className="card-stats-height card-attack-height">
+                    <div className="card-stats card-attack">
+                        {props.card.attack}
+                    </div>
+                </div>
+            </div>
+            <div className="card-stats-width card-health-width">
+                <div className="card-stats-height card-health-height">
+                    <div className="card-stats card-health">
+                        {props.card.health}
+                    </div>
+                </div>
+            </div>
         </div >
     );
 }
 
 function Hero(props) {
-    // ヒロパ？ 1点　2回復
+    // ヒロパつくる？ 1点　2回復
+    const heroId = "HERO_09" // いっぱいあってもいいかもー
     return (
-        <div className="hero">
-            {props.hp}
+        <div className={"hero-container" + (props.heroHp > 0 ? " alive" : "")}>
+            <img
+                className="hero"
+                src={`https://art.hearthstonejson.com/v1/render/latest/enUS/512x/${heroId}.png`} // propsから持ってくるとか
+                alt=""
+            />
+            <div className='hero-hp-width'>
+                <div className='hero-hp-height'>
+                    <div className="hero-hp">
+                        {props.heroHp}
+                    </div>
+                </div>
+            </div>
         </div >
     );
 }
 
 function Board(props) {
+    // スタートボタンが押されないとcardListが空なため
     if (props.cardList && props.cardList.length) {
         function renderCard(i) {
             return (
@@ -71,40 +104,49 @@ function Board(props) {
                     key={i}
                     card={props.cardList[i]}
                     selected={i === props.selectBefore || false}
-                    onClick={() => props.onClick(i)}
+                    onClick={() => props.onClick(i)} // ここで引数を与える
+                    onLoad={() => props.onLoad(i)} // 引数は未使用だが、いちおう
                 />
             );
         }
-
         function renderHero() {
             return (
-                <Hero key="hero" hp={props.hp} />
+                <Hero key="hero" heroHp={props.heroHp} />
             )
         }
-
         return (
-            <div className='board'>
-                {[
-                    renderCard(0),
-                    renderCard(1),
-                    renderCard(2),
-
-                    renderCard(3),
-                    renderHero(),
-                    renderCard(4),
-
-                    renderCard(5),
-                    renderCard(6),
-                    renderCard(7),
-                ]}
+            <div>
+                <div className={'board' + (props.imgLoaded < 8 ? ' loading' : "")}>{[
+                    renderCard(0), renderCard(1), renderCard(2),
+                    renderCard(3), renderHero(), renderCard(4),
+                    renderCard(5), renderCard(6), renderCard(7),
+                ]}</div>
             </div>
         );
-    } else { return null; }
+    } else {
+        return null;
+    }
 }
 
 function Game(props) {
-    // jsonリクエスト
     const [jsonData, setJsonData] = useState([])
+    const [gameReady, setGameReady] = useState(false);
+
+    const [startButtonText, setStartButtonText] = useState("loading...")
+    const [message, setMessage] = useState("※ロードが終わらない場合はページを再読込");
+
+    const [imgLoaded, setImgLoaded] = useState(0);
+
+    const [round, setRound] = useState(1);
+    const [heroHp, setHeroHp] = useState(0);
+
+    const [score, setScore] = useState(0);
+    const [count, setCount] = useState(-1); // 0のときuseEffectなので初期値-1
+
+    const [cardList, setCardList] = useState([]);
+    const [selectBefore, setSelectBefore] = useState(-1); // -1は何も選択されていない状態
+
+    // jsonリクエスト
     useEffect(() => {
         const url = 'https://api.hearthstonejson.com/v1/latest/jaJP/cards.collectible.json';
         const fetchJsonData = async () => {
@@ -117,7 +159,7 @@ function Game(props) {
             }
         }
         fetchJsonData(); //呼び出し
-        // レスポンスイメージ
+        // レスポンスイメージ(折りたたみ)
         // [{
         //     artist: "Konstantin Turovec",
         //     attack: 1,
@@ -138,19 +180,14 @@ function Game(props) {
         // }]
     }, []); // ロード時1回だけ
 
-    const [gameReady, setGameReady] = useState(false);
-    const [count, setCount] = useState(-1); // 0のときuseEffectなので初期値-1
-    // 並べ替えてない
-    const [startButtonText, setStartButtonText] = useState("ゲームスタート！")
-    const [round, setRound] = useState(1);
-    const [cardList, setCardList] = useState([]);
-    const [hp, setHp] = useState(0);
-    const [message, setMessage] = useState("　"); // 表示合わせに全角スペース
-    const [selectBefore, setSelectBefore] = useState(-1); // -1は何も選択されていない状態
-    const [score, setScore] = useState(0);
-
     // 読込完了次第gameReady
-    useEffect(() => { if (jsonData.length) setGameReady(true); }, [jsonData]);
+    useEffect(() => {
+        if (jsonData.length) {
+            setGameReady(true);
+            setStartButtonText("ゲームスタート！")
+            setMessage("　")
+        }
+    }, [jsonData]);
 
     // タイマ
     // https://rios-studio.com/tech/react-hookにおけるtimeoutとtimeinterval【止まらない・重複する】
@@ -170,11 +207,22 @@ function Game(props) {
 
     // スタートボタンが押された時
     const handleStartButtonClick = useCallback((jsonData) => {
+        // 状態管理
         setGameReady(false);
-        setMessage("　"); // 表示合わせに全角スペース
+
+        // ロード処理
+        setImgLoaded(0);
+        setMessage("loading...");
+
+        // heroHpが0以下ならいろいろ初期化
+        if (heroHp <= 0) {
+            setHeroHp(HEROHPMAX);
+            setRound(1);
+            setScore(0)
+        }
 
         setStartButtonText(`Round ${round}`);
-        if (hp <= 0) setHp(HPMAX);
+        setCount(COUNTMAX);
 
         // カードリスト抽選
         let randCardList = [];
@@ -187,11 +235,23 @@ function Game(props) {
             randCardList.push(new CardData(card));
         }
         setCardList(randCardList);
+    }, [round, heroHp]);
 
-        //カウントダウン開始
-        setCount(COUNTMAX);
-        startCount();
-    }, [round, hp, startCount]);
+    // カードがロードされた時
+    // これをuseCallbackにしないと、再レンダリングがかかる
+    const handleImgLoad = useCallback((i) => {
+        // ここで全部ロード終わった判定を入れることも考えたけど、
+        // stateを取るタイミングが同時だとうまくいかなかったので、
+        // ここの処理をインクリメントにして、useEffectで判定してみる
+        setImgLoaded(imgLoaded => imgLoaded + 1);
+    }, []);
+    // 全部ロードされたら表示してタイマースタート
+    useEffect(() => {
+        if (imgLoaded === 8) {
+            setMessage("　") // 表示合わせに全角スペース
+            startCount(); //タイマースタート
+        }
+    }, [imgLoaded, startCount]);
 
     // 終了条件を満たしたときの結果チェック処理
     // 全部クリア、1枚残り、タイムオーバーで呼ばれる
@@ -205,13 +265,12 @@ function Game(props) {
             const damage = cardList
                 .filter((card) => { return card.health !== 0; })
                 .reduce((sum, card) => sum + card.attack, 0);
-            const remainHp = hp - damage
-            setHp(remainHp);
+            const remainHeroHp = heroHp - damage
+            setHeroHp(remainHeroHp);
 
             // ダメージ計算の結果死んでいたら、ゲームオーバー処理後falseを返す
-            if (remainHp <= 0) {
+            if (remainHeroHp <= 0) {
                 setMessage("ゲームオーバー！");
-                setRound(1);
                 setStartButtonText("もう一度プレイ");
                 return false;
             }
@@ -220,7 +279,7 @@ function Game(props) {
         setRound(round => round + 1);
         setStartButtonText("次のラウンド")
         return true;
-    }, [stopCount, cardList, hp]);
+    }, [stopCount, cardList, heroHp]);
 
     // タイムオーバー処理
     // countが変化するたびに呼ばれて、0になった瞬間に処理される
@@ -233,43 +292,57 @@ function Game(props) {
 
     // カードがクリックされた時
     const handleCardClick = useCallback((selectAfter) => {
-        if (selectBefore === -1) setSelectBefore(selectAfter); // 1枚目
-        else if (selectAfter === selectBefore) setSelectBefore(-1); // 同じの
-        else {
-            let changedCardList = cardList;
+        if (cardList[selectAfter].health <= 0) { // healthが0以下のものを選択
+            return false;
 
-            const aHealth = changedCardList[selectAfter].health;
-            const bHealth = changedCardList[selectBefore].health;
-            const aAttack = changedCardList[selectAfter].attack;
-            const bAttack = changedCardList[selectBefore].attack;
+        } else if (selectBefore === -1) { // 未選択から選択
+            setSelectBefore(selectAfter)
+
+        } else if (selectAfter === selectBefore) { // 同じものを2回選択
+            setSelectBefore(-1);
+
+        } else {
+            let cards = [...cardList];
+            // こうしないと参照先を変更してしまってレンダリングがおかしくなる可能性あり
+            // https://nekoniki.com/20200818_react_state_array
+
+            // バトル！
+            const aHealth = cards[selectAfter].health;
+            const bHealth = cards[selectBefore].health;
+            const aAttack = cards[selectAfter].attack;
+            const bAttack = cards[selectBefore].attack;
 
             const aHealthSub = aHealth - bAttack;
-            if (aHealthSub > 0) changedCardList[selectAfter].health = aHealthSub;
+            if (aHealthSub > 0) cards[selectAfter].health = aHealthSub;
             else {
                 setScore(score => score + 1);
-                changedCardList[selectAfter].health = 0;
+                cards[selectAfter].health = 0;
             }
 
             const bHealthSub = bHealth - aAttack;
-            if (bHealthSub > 0) changedCardList[selectBefore].health = bHealthSub;
+            if (bHealthSub > 0) cards[selectBefore].health = bHealthSub;
             else {
                 setScore(score => score + 1);
-                changedCardList[selectBefore].health = 0;
+                cards[selectBefore].health = 0;
             }
 
-            setCardList(changedCardList);
+            setCardList(cards);
             setSelectBefore(-1);
 
-            const allDeadFlag = cardList.every((card) => { return card.health === 0 || card.attack === 0; });
+            // 終了判定
+            // クリア
+            const allDeadFlag = cardList.every((card) => { return (card.health === 0 || card.attack === 0); });
             if (allDeadFlag) {
                 resultCheck(false); // 常にtrueが返る
                 setMessage("クリア！");
+                return;
             }
-
+            // 詰み
             const onlyAliveFlag = cardList.filter((card) => { return card.health !== 0; }).length === 1;
             if (onlyAliveFlag) {
                 const result = resultCheck();
                 if (result) setMessage("詰んだ！ダメージを受けた");
+                return;
             }
         }
     }, [selectBefore, cardList, resultCheck])
@@ -284,12 +357,19 @@ function Game(props) {
                 />
                 <Counter count={count} score={score} countMax={COUNTMAX} />
             </div>
-            <div className='message'>{message}</div>
-            <Board
-                cardList={cardList}
-                hp={hp}
-                selectBefore={selectBefore}
-                onClick={(i) => handleCardClick(i)} />
+            <div className='message'>
+                {message}
+            </div>
+            {cardList.length
+                ? <Board
+                    cardList={cardList}
+                    heroHp={heroHp}
+                    selectBefore={selectBefore}
+                    imgLoaded={imgLoaded}
+                    onLoad={handleImgLoad}
+                    onClick={handleCardClick} // 引数を設定するのはBoard側なので、ここではいらない
+                />
+                : null}
         </div>
     );
 }
