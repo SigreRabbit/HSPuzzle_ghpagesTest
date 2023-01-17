@@ -1,9 +1,9 @@
-body {
+/* body {
     font-size: 16px;
     font-family: "メイリオ", Meiryo, "游ゴシック", YuGothic, sans-serif;
-}
+} */
 
-.button.start {
+/* .button.start {
     float: left;
     width: 30%;
     min-width: 130px;
@@ -15,17 +15,17 @@ body {
     box-sizing: border-box;
     background: #cbe8fa;
     cursor: pointer;
-}
-
+} */
+/* 
 .counter {
     float: left;
     width: 70%;
     min-width: 200px;
     max-width: 500px;
     margin: 15px;
-}
+} */
 
-.time {
+/* .time {
     float: left;
     margin-right: 2em;
 }
@@ -41,33 +41,34 @@ body {
 #progress-bar {
     width: 100%;
     max-width: 300px;
-}
+} */
 
+/* 
 .top {
     overflow: hidden;
-}
+} */
 
-.message {
+/* .message {
     width: auto;
     margin-left: 15px;
-}
+} */
 
-.board {
+/* .board {
     width: 90vw;
     min-width: 400px;
     max-width: 600px;
     height: 75vh;
     max-height: 800px;
     margin: 10px;
-}
+} */
 
-.board.loading {
+/* .board.loading {
     display: none;
-}
+} */
 
 /* 横幅が1/3、縦横比固定、はみ出し部分非表示 */
 /* 縦ちょっと長くして、.cardのwidthを120%とかにするとさらにきれいに切れそうだけど、今のでもいいかな */
-.card-container {
+/* .card-container {
     position: relative;
     float: left;
     width: calc(100% / 3);
@@ -83,23 +84,25 @@ body {
 
     filter: grayscale(0%);
 
-    /* 左上と右下にかけることでそれっぽく */
+    /* 左上と右下にかけることでそれっぽく 
     filter: drop-shadow(4px 4px 3px #0ce4f7) drop-shadow(-4px -4px 3px #0ce4f7);
 }
 
-/* コンテナのサイズで、コンテナ中央に表示 → 上下がはみ出して消える */
-.card {
+/* コンテナのサイズで、コンテナ中央に表示 → 上下がはみ出して消える 
+*/
+/* .card {
     width: 100%;
     height: 100%;
 
     object-fit: cover;
-}
+} */
 
+/*
 .card.selected, .card.selected:hover {
     filter: drop-shadow(4px 4px 3px #0c51ff) drop-shadow(-4px -4px 3px #0c51ff);
 }
-
-
+ */
+/* 
 .hero-container {
     position: relative;
     float: left;
@@ -116,14 +119,14 @@ body {
 }
 
 .hero {
-    /* これもobject-fit: coverでできるような気もするけど、めっちゃずれるので、直接ずらす */
+    /* これもobject-fit: coverでできるような気もするけど、めっちゃずれるので、直接ずらす 
     position: absolute;
     top: -25%;
     left: -45%;
     width: 175%;
 }
 
-/* 以下、それっぽくしてるけどよくわかってない */
+/* 以下、それっぽくしてるけどよくわかってない 
 .card-stats-width {
     position: absolute;
     width: 40px;
@@ -147,11 +150,11 @@ body {
 }
 
 .card-attack-height {
-    background: rgb(255, 233, 167);
+    background: rgb(255, 207, 65);
 }
 
 .card-health-height {
-    background: rgb(255, 108, 108);
+    background: rgb(255, 70, 70);
 }
 
 .card-stats {
@@ -180,7 +183,7 @@ body {
     bottom: 0;
     width: 50%;
     max-width: 50px;
-    /* なんかこっちではclampが使えない? */
+    /* なんかこっちではclampが使えない? 
 }
 
 .hero-hp-height {
@@ -203,7 +206,7 @@ body {
     text-align: center;
 
     user-select: none;
-}
+} */
 
 /* 
 .hero {
