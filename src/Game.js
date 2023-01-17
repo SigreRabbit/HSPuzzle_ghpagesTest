@@ -2,6 +2,7 @@ import React, { memo, useState, useEffect, useCallback, useRef } from 'react'
 import { Box, Grid, Stack, Button, LinearProgress } from "@mui/material"
 import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+// import { maxWidth } from '@mui/system';
 
 const COUNTMAX = 30; // 制限時間(短くしていく場合どこかで管理)
 const HEROHPMAX = 30; // ヒーローHP
@@ -18,6 +19,13 @@ const theme = createTheme({
         },
     },
     components: {
+        // MuiCssBaseline: {
+        //     styleOverrides: {
+        //         body: {
+        //             height: "100svh",
+        //         },
+        //     },
+        // },
         MuiButton: {
             textTransform: "none",
             defaultProps: {
@@ -78,7 +86,7 @@ function Card(props) {
     const WidthBox = styled(Box)(() => ({
         position: "absolute",
         width: "30%",
-        bottom: "5%",
+        bottom: "1%",
     }));
 
     const HeightBox = styled(Box)(() => ({
@@ -95,8 +103,9 @@ function Card(props) {
         position: "absolute",
         top: "0",
         // フォントサイズをいい感じに
-        fontSize: "clamp(1px, 5vw, 100px)",
-        lineHeight: "clamp(1px, 10vw, 100px)",
+        // これを%にすると、親のフォントサイズをもとにしてしまうので合わない(widthとかでない)
+        fontSize: "clamp(1px, 5dvw, 60px)",
+        lineHeight: "clamp(1px, 10dvw, 120px)",
         fontWeight: "bold",
         textAlign: "center",
         userSelect: "none",
@@ -104,15 +113,27 @@ function Card(props) {
 
     return (
         <Grid item
-            xs={4} sx={{ position: "relative", overflow: "hidden", aspectRatio: "4/5.7" }} >
+            xs={4} sx={{
+                // maxHeight: "calc(100% / 3)",
+                position: "relative", overflow: "hidden",
+                //  aspectRatio: "4/5.5"
+            }} >
             <Box onClick={props.onClick}>
                 <Box
                     component="img"
                     sx={{
+                        color: "transparent",
+
+
+                        // position: "absolute",
+                        // top: "-2%",
                         width: "100%",
                         height: "100%",
                         objectFit: "cover",
                         filter:
+
+                            "opacity(0%) " +
+
                             (props.card.health === 0
                                 ? "grayscale(100%)"
                                 : ("grayscale(0%) " + (props.selected ? shadowRed : shadowBlue))
@@ -148,10 +169,13 @@ function Hero(props) {
     const heroId = "HERO_09" // いっぱいあってもいいかもー
     return (
         <Grid item
-            xs={4} sx={{ position: "relative", overflow: "hidden", aspectRatio: "4/5.7" }}>
+            xs={4} sx={{
+
+                position: "relative", overflow: "hidden", aspectRatio: "4/5.5"
+            }}>
             <Box
                 component="img"
-                src={`https://art.hearthstonejson.com/v1/render/latest/enUS/512x/${heroId}.png`} // propsから持ってくるとか
+                src={`ttps://art.hearthstonejson.com/v1/render/latest/enUS/512x/${heroId}.png`} // propsから持ってくるとか
                 alt=""
                 sx={{
                     // objectFit: "cover",
@@ -231,8 +255,12 @@ const Board = memo((props) => {
                 max-height: 800px;
                 margin: 10px;
             } */
+            // <Box sx={{ flexGrow: "1" }}>
             <Grid container
                 display={props.imgLoaded < 8 ? "none" : "flex"}
+
+                sx={{ width: "100%" }}
+            // sx={{ maxHeight: "calc(100svh - 102px)" }}
             // spacing={1}
             >
                 {renderCard(0)}
@@ -245,6 +273,7 @@ const Board = memo((props) => {
                 {renderCard(6)}
                 {renderCard(7)}
             </Grid >
+            // {/* </Box> */}
         );
         // この時点の高さは合っているが、子の高さを合わせていない
     } else {
@@ -476,16 +505,16 @@ function Game(props) {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            {/* <div className="game"> */}
-            {/* <div className="top"> */}
-            {/* <Box sx={{ display: "flex", margin: 2, }}> */}
-            <Stack spacing={2} sx={{ margin: 2 }}>
+            {/* ここが一番外側なので高さを制限 */}
+            <Stack spacing={2} sx={{ height: "100dvh", padding: "16px" }}>
                 <Box>
                     <Button
                         sx={{
                             float: "left",
-                            width: "160px",
-                            height: "48px",
+                            width: "100vw - 24px",
+                            maxWidth: "160px",
+                            minHeight: "48px",
+                            fontSize: "clamp(1px, 6vw, 16px)",
                             marginRight: "8px"
                         }}
                         onClick={() => handleStartButtonClick(jsonData)}
@@ -498,18 +527,30 @@ function Game(props) {
                         score={score}
                         countMax={COUNTMAX} />
                 </Box>
-                <Box component="span">{message}</Box>
-                {cardList.length
-                    ? <Board
-                        cardList={cardList}
-                        heroHp={heroHp}
-                        selectBefore={selectBefore}
-                        imgLoaded={imgLoaded}
-                        onLoad={handleImgLoad}
-                        // 引数を設定するのはBoard側なので、ここではいらない
-                        onClick={handleCardClick} />
-                    : null}
-            </Stack>
+                <Box sx={{ height: "32px" }}>{message}</Box>
+                {/* Stackの余りの高さのdivを作った後、それをもとにBoardのサイズを決める */}
+                {/* 横が大きすぎるときできてないなあ */}
+                <Box sx={{ flexGrow: "1" }}>
+                    <Box sx={{ maxHeight: "100%", aspectRatio: "4/5.5", }}>
+                        {/* <Box sx={{ maxHeight: "100%", aspectRatio: "4/5.5", width: "min(100%, calc(100dvw - 32px))" }}> */}
+                        {/* <Box sx={{ aspectRatio: "4/5.5", width: "min(100%, calc(100dvw - 32px))" }}> */}
+
+                        {cardList.length
+                            ? <Board
+                                cardList={cardList}
+                                heroHp={heroHp}
+                                selectBefore={selectBefore}
+                                imgLoaded={imgLoaded}
+                                onLoad={handleImgLoad}
+                                // 引数を設定するのはBoard側なので、ここではいらない
+                                onClick={handleCardClick} />
+                            : null}
+                        {/* </Box> */}
+                        {/* </Box> */}
+                    </Box>
+                </Box>
+            </Stack >
+
             {/* </div> */}
         </ThemeProvider >
     );
