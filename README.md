@@ -1,23 +1,15 @@
-### ローカルで動かす
-```
-npm start
-```
--> http://localhost:3000
+# HSPuzzle
 
-### gh-pagesを更新
-```
-npm run deploy
-```
+## ローカルで動かす
 
-### mainにpush
-```
-git add .
-git commit
-git push
-```
+```npm start```
+-> <http://localhost:3000>
 
+## deployしてgh-pagesを更新
 
-### メモ
+```npm run git```
+
+## メモ
 
 - よさそう
 -- Divine Shield -> 1回ダメージ無効にしてDSを消す　相手攻撃力0にするのが処理楽か？ちゃんと戻すこと  
