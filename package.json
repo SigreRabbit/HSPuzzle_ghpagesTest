@@ -1,5 +1,6 @@
 {
   "name": "hspuzzle",
+  // github-pagesのURL、末尾スラッシュは含めない
   "homepage": "https://sigrerabbit.github.io/HSPuzzle_ghpagesTest",
   "version": "0.1.0",
   "private": true,
